@@ -11,10 +11,9 @@ import {
   MapPin,
   Calendar,
   ChevronsRight,
-  ChevronRight,
 } from "lucide-react";
 
-const portraitImage = "https://i.pravatar.cc/300?img=59";
+import portraitImage from "./_ANA9050-Edit resize.png";
 
 // --- MOCK DATA ---
 const WORK_HISTORY = [
@@ -136,9 +135,9 @@ const PROJECT_DETAILS = {
     tools: ["Premiere Pro", "After Effects", "Camera Systems", "Lighting"],
     projects: [
       {
-        name: "Social Media Video (Facebook)",
-        link: "https://www.facebook.com/share/v/14gBJpd89wD/",
-        roles: ["Video Editor", "Director"],
+        name: "Hustle Crew - One w1sh",
+        link: "https://www.youtube.com/watch?v=2re8znEXbKs",
+        roles: ["Camera Operator", "Color Grading"],
       },
     ],
   },
@@ -343,7 +342,7 @@ export default function App() {
 
         {/* --- CỘT TRÁI (SIDEBAR) --- */}
         <div
-          className={`relative z-50 p-10 md:p-20 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
+          className={`relative z-10 p-10 md:p-20 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
                         ${
                           isSidebarCollapsed
                             ? "w-full lg:w-[80px] px-2 md:px-2 lg:px-2 items-center"
@@ -353,10 +352,10 @@ export default function App() {
           {isSidebarCollapsed && (
             <button
               onClick={() => handlePageChange("home")}
-              className="absolute top-1/2 -right-6 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 hover:scale-125 transition-all duration-300 z-[100] hidden lg:block drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]"
+              className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-orange-500 text-white p-2 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-50 hover:bg-orange-400 transition-colors hidden lg:block"
               title="Expand Profile"
             >
-              <ChevronRight size={36} strokeWidth={2.5} />
+              <ChevronsRight size={20} />
             </button>
           )}
 
@@ -373,7 +372,7 @@ export default function App() {
               className="w-32 h-32 rounded-full object-cover border-[3px] border-white/10 mb-8 shadow-[0_0_30px_rgba(249,115,22,0.15)]"
             />
             <h1 className="text-4xl md:text-6xl font-bold mb-2 whitespace-nowrap tracking-tight text-white">
-              Thịnh.
+              Phạm Thịnh
             </h1>
             <h2 className="text-sm uppercase tracking-[0.2em] text-orange-400 mb-8 font-semibold">
               Senior Video Editor & Founder 43MM
@@ -557,10 +556,10 @@ export default function App() {
         {isSidebarCollapsed && (
           <button
             onClick={() => handlePageChange("home")}
-            className="absolute top-1/2 -right-12 transform -translate-y-1/2 text-orange-500 hover:text-orange-400 hover:scale-125 transition-all duration-300 z-[100] hidden lg:block drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]"
+            className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-orange-500 text-white p-2 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-[100] hover:bg-orange-400 transition-colors hidden lg:block"
             title="Expand Profile"
           >
-            <ChevronRight size={36} strokeWidth={2.5} />
+            <ChevronsRight size={20} />
           </button>
         )}
 
