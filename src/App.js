@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Github,
   Linkedin,
@@ -11,8 +11,13 @@ import {
   MapPin,
   Calendar,
   ChevronsRight,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
+// Đã tạm thay thế bằng link ảnh online để Canvas có thể biên dịch thành công.
+// Khi đưa code về CodeSandbox của bạn, hãy bỏ comment dòng import bên dưới và xóa dòng const đi nhé.
+// import portraitImage from "./_ANA9050-Edit resize.png";
 import portraitImage from "./_ANA9050-Edit resize.png";
 
 // --- MOCK DATA ---
@@ -21,8 +26,8 @@ const WORK_HISTORY = [
     id: 1,
     timelineId: "editor",
     year: "2022 - Present",
-    role: "Senior Video Editor",
-    company: "Media MICE",
+    role: "Media MICE",
+    company: "Senior Video Editor",
     description: "",
     skills: ["Video Editing", "Post-production", "Premiere Pro"],
     hasDetails: true,
@@ -31,8 +36,8 @@ const WORK_HISTORY = [
     id: 2,
     timelineId: "founder",
     year: "2021 - Present",
-    role: "Founder 43MM",
-    company: "",
+    role: "43MM",
+    company: "Founder",
     description: "",
     skills: ["Team Leadership", "Project Management", "Creative Direction"],
     hasDetails: true,
@@ -51,8 +56,8 @@ const WORK_HISTORY = [
     id: 4,
     timelineId: "robot",
     year: "From 2018",
-    role: "Participant",
-    company: "Da Nang Robonic Competition",
+    role: "Da Nang Robonic Competition",
+    company: "Participant",
     description: "",
     skills: ["Robotics", "Teamwork", "Hardware"],
     hasDetails: false,
@@ -61,13 +66,23 @@ const WORK_HISTORY = [
 
 const PROJECT_DETAILS = {
   1: {
-    title: "Senior Video Editor",
-    company: "Media MICE",
+    title: "Media MICE",
+    company: "Senior Video Editor",
     duration: "2022 - Present",
     overview:
       "With a mindset of continuous innovation, I have built significant milestones on my journey from Junior to Senior Video Editor. I am proud to be the pioneer of the 'Sizzle Reel' product line, standardizing the workflow between the Video and Animation departments, and successfully applying 3D and AI into practical production. As a result, I frequently take on the role of Art Director to lead the visual aspect of groundbreaking creative campaigns. More than just a professional, I also carry the mission of 'passing the torch' – organizing training programs and directly guiding new personnel, contributing to building a strong team.",
     tools: ["Premiere Pro", "After Effects", "DaVinci Resolve", "Audition"],
     projects: [
+      {
+        name: "Short: Cinematic Showcase",
+        link: "https://www.youtube.com/shorts/BM0qG2HGcqw",
+        roles: ["Video Editor", "Color Grading"],
+      },
+      {
+        name: "Short: Creative Process",
+        link: "https://www.youtube.com/shorts/6FOmw30Xl-s",
+        roles: ["Video Editor"],
+      },
       {
         name: null,
         link: "https://youtu.be/krzZfpxVreM?si=hmFk0ys8CaryL6tK",
@@ -91,8 +106,8 @@ const PROJECT_DETAILS = {
     ],
   },
   2: {
-    title: "Founder 43MM",
-    company: "",
+    title: "43MM",
+    company: "Founder",
     duration: "2021 - Present",
     tools: ["Notion", "Google Workspace", "Final Cut Pro", "Trello"],
     projects: [
@@ -154,6 +169,8 @@ const getMediaEmbedUrl = (url) => {
       videoId = url.split("youtu.be/")[1]?.split("?")[0];
     } else if (url.includes("youtube.com/playlist")) {
       playlistId = new URL(url).searchParams.get("list");
+    } else if (url.includes("youtube.com/shorts/")) {
+      videoId = url.split("youtube.com/shorts/")[1]?.split("?")[0];
     } else if (url.includes("facebook.com")) {
       return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(
         url
@@ -176,7 +193,6 @@ const getActiveYears = (hoveredId) => {
   return [];
 };
 
-// ĐỔI GIAO DIỆN TIMELINE SANG DARK MODE VỚI HIỆU ỨNG GLOW VÀ NÉT MỎNG LIỀN
 const getLineStyles = (hoveredId) => {
   const defaultLine = "border-white/20 border-solid z-0 opacity-40";
   const activeLine =
@@ -195,7 +211,6 @@ const TIMELINE_ROWS = [
     contentId: "founder",
     renderLines: (styles) => (
       <>
-        {/* Điểm đầu: Fade in từ mờ sang rõ */}
         <div
           className={`absolute top-[32px] bottom-0 left-[50%] border-l ${styles.founder} transition-all duration-300`}
           style={{
@@ -269,7 +284,6 @@ const TIMELINE_ROWS = [
     contentId: "robot",
     renderLines: (styles) => (
       <>
-        {/* Điểm cuối: Kéo dài thêm height (100px) và dùng mask để tạo đuôi vệt sáng fade out */}
         <div
           className={`absolute top-0 h-[100px] left-[50%] border-l ${styles.fpt} transition-all duration-300`}
           style={{
@@ -286,22 +300,13 @@ const TIMELINE_ROWS = [
 
 const AtmosphericBackground = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none bg-[#050505] z-0">
-    {/* Orbital Rings - Căn chỉnh giữa màn hình để tạo chiều sâu */}
     <div className="absolute top-[30%] left-[20%] w-[1200px] h-[1200px] border-[1px] border-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
     <div className="absolute bottom-[10%] right-[10%] w-[800px] h-[800px] border-[1px] border-white/5 rounded-full translate-x-1/4 translate-y-1/4"></div>
-
-    {/* Stars/Satellites */}
     <div className="absolute top-[25%] right-[15%] w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_15px_#fff]"></div>
     <div className="absolute bottom-[30%] left-[10%] w-1 h-1 bg-white/40 rounded-full"></div>
-
-    {/* Vầng hào quang chéo màu cam (Diagonal Fiery Flare) - Làm đậm và rực rỡ hơn */}
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[120px] bg-gradient-to-r from-red-600/0 via-orange-500/40 to-orange-600/0 blur-[70px] -rotate-[35deg] mix-blend-screen"></div>
-
-    {/* Lõi sáng (Core Glow) - Kép để tạo chiều sâu và độ gắt rực rỡ */}
     <div className="absolute top-[40%] left-[30%] w-[500px] h-[500px] bg-orange-600/30 rounded-full blur-[150px] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"></div>
     <div className="absolute top-[40%] left-[30%] w-[250px] h-[250px] bg-amber-500/20 rounded-full blur-[90px] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"></div>
-
-    {/* Noise Overlay - Tăng opacity và chỉnh frequency để tạo hiệu ứng Film Grain chân thực, đặt ở cuối để phủ lên ánh sáng */}
     <div
       className="absolute inset-0 opacity-[0.15] mix-blend-overlay"
       style={{
@@ -310,6 +315,137 @@ const AtmosphericBackground = () => (
     ></div>
   </div>
 );
+
+// --- COMPONENT MỚI: QUẢN LÝ DANH MỤC DỰ ÁN (CÓ SCROLL & XỔ XUỐNG) ---
+const ProjectCategorySection = ({ categoryTitle, projects }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const scrollRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = window.innerWidth < 768 ? 300 : 450;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  if (!projects || projects.length === 0) return null;
+
+  return (
+    <div className="w-full animate-in fade-in duration-500 mb-10 md:mb-14">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 md:mb-8">
+        <h3 className="text-lg md:text-xl font-bold uppercase tracking-widest text-white flex items-center gap-3 drop-shadow-md">
+          <span className="w-2 h-2 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.8)]"></span>
+          {categoryTitle}
+        </h3>
+
+        {/* Cụm nút điều hướng & See All (Chỉ hiện khi có nhiều hơn 2 dự án) */}
+        {projects.length > 2 && (
+          <div className="flex items-center gap-3 md:gap-4">
+            {!isExpanded && (
+              <div className="hidden md:flex items-center gap-2">
+                <button
+                  onClick={() => scroll("left")}
+                  className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-all text-gray-400 shadow-lg"
+                  title="Scroll Left"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  onClick={() => scroll("right")}
+                  className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-all text-gray-400 shadow-lg"
+                  title="Scroll Right"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            )}
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 hover:bg-orange-500 hover:text-white text-orange-400 whitespace-nowrap"
+            >
+              {isExpanded ? "Show Less" : "Show All"}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div
+        ref={!isExpanded ? scrollRef : null}
+        className={
+          isExpanded
+            ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6 md:gap-8 w-full transition-all duration-500"
+            : "flex overflow-x-auto gap-6 md:gap-8 pb-8 snap-x snap-mandatory hide-scrollbar items-stretch pr-6 md:pr-10 w-full transition-all duration-500"
+        }
+      >
+        {projects.map((proj, idx) => {
+          const embedUrl = getMediaEmbedUrl(proj.link);
+          return (
+            <div
+              key={idx}
+              className={`p-6 md:p-8 border border-white/10 rounded-[2rem] bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(249,115,22,0.08)] transition-all duration-500 group flex flex-col backdrop-blur-sm overflow-hidden ${
+                isExpanded
+                  ? "w-full"
+                  : "w-[85vw] sm:w-[350px] md:w-[400px] xl:w-[450px] flex-shrink-0 snap-center sm:snap-start"
+              }`}
+            >
+              {embedUrl && (
+                <div className="w-full aspect-video rounded-2xl overflow-hidden bg-black mb-6 md:mb-8 shadow-2xl border border-white/5 relative flex-shrink-0 group-hover:scale-[1.02] transition-transform duration-500">
+                  <iframe
+                    className="absolute top-0 left-0 w-full h-full"
+                    src={embedUrl}
+                    title={proj.name}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              )}
+
+              <div className="mb-6 flex-1 w-full">
+                {proj.link ? (
+                  <a
+                    href={proj.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xl md:text-2xl font-bold flex items-start justify-between gap-4 group-hover:text-orange-400 transition-colors w-full text-white break-words"
+                  >
+                    <span className="line-clamp-2">{proj.name}</span>
+                    <ExternalLink
+                      size={24}
+                      className="text-gray-500 group-hover:text-orange-500 transition-colors flex-shrink-0 mt-1"
+                    />
+                  </a>
+                ) : (
+                  <h4 className="text-xl md:text-2xl font-bold text-white line-clamp-2 break-words">
+                    {proj.name}
+                  </h4>
+                )}
+              </div>
+
+              {proj.roles && proj.roles.length > 0 && (
+                <div className="flex flex-wrap gap-2 items-center mt-auto pt-6 border-t border-white/10 w-full">
+                  <span className="text-xs text-gray-500 uppercase tracking-widest mr-2 font-bold flex-shrink-0">
+                    Role
+                  </span>
+                  {proj.roles.map((role, roleIdx) => (
+                    <span
+                      key={roleIdx}
+                      className="px-2 md:px-3 py-1 md:py-1.5 bg-orange-500/10 text-orange-400 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-md border border-orange-500/20 whitespace-nowrap"
+                    >
+                      {role}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default function App() {
   const [activePage, setActivePage] = useState("home");
@@ -334,25 +470,26 @@ export default function App() {
     }
   };
 
+  // NẾU ĐANG Ở TRANG CHI TIẾT DỰ ÁN
   if (activePage !== "home" && PROJECT_DETAILS[activePage]) {
     const details = PROJECT_DETAILS[activePage];
     return (
       <div className="relative flex flex-col lg:flex-row min-h-screen font-sans text-white selection:bg-orange-500/30 selection:text-orange-200 bg-[#050505]">
         <AtmosphericBackground />
 
-        {/* --- CỘT TRÁI (SIDEBAR) --- */}
+        {/* --- CỘT TRÁI (SIDEBAR) TRONG TRANG CHI TIẾT --- */}
         <div
-          className={`relative z-10 p-10 md:p-20 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
+          className={`relative z-50 p-6 md:p-10 lg:p-12 xl:p-20 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
                         ${
                           isSidebarCollapsed
-                            ? "w-full lg:w-[80px] px-2 md:px-2 lg:px-2 items-center"
+                            ? "w-full lg:w-[100px] px-4 md:px-4 lg:px-4 items-center"
                             : "w-full lg:w-[40%]"
                         } `}
         >
           {isSidebarCollapsed && (
             <button
               onClick={() => handlePageChange("home")}
-              className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-orange-500 text-white p-2 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-50 hover:bg-orange-400 transition-colors hidden lg:block"
+              className="absolute top-1/2 -right-5 transform -translate-y-1/2 bg-orange-500 text-white p-2.5 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-[100] hover:bg-orange-400 transition-colors hidden lg:block"
               title="Expand Profile"
             >
               <ChevronsRight size={20} />
@@ -360,50 +497,53 @@ export default function App() {
           )}
 
           <div
-            className={`transition-opacity duration-300 ${
+            className={`transition-opacity duration-300 w-full max-w-full ${
               isSidebarCollapsed
                 ? "opacity-0 hidden lg:block lg:opacity-0 lg:w-0 lg:h-0 overflow-hidden"
-                : "opacity-100 w-full"
+                : "opacity-100"
             }`}
           >
+            {/* Ảnh Responsive: Kích thước được phóng to gấp 2 lần, sử dụng object-[center_15%] để khuôn mặt được tập trung lấy từ đỉnh đầu */}
             <img
               src={portraitImage}
               alt="Phạm Tấn Thịnh"
-              className="w-32 h-32 rounded-full object-cover border-[3px] border-white/10 mb-8 shadow-[0_0_30px_rgba(249,115,22,0.15)]"
+              className="w-[240px] sm:w-[280px] md:w-[320px] lg:w-[260px] xl:w-[340px] aspect-square rounded-full object-cover object-[center_15%] flex-shrink-0 border-[4px] border-white/10 mb-6 xl:mb-10 shadow-[0_0_40px_rgba(249,115,22,0.2)] mx-auto lg:mx-0 max-w-full h-auto transition-all duration-500"
             />
-            <h1 className="text-4xl md:text-6xl font-bold mb-2 whitespace-nowrap tracking-tight text-white">
-              Phạm Thịnh
+
+            {/* Đảm bảo break-words và max-w-full để chống tràn trên màn hình nhỏ */}
+            <h1 className="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold mb-3 tracking-tight text-white break-words text-center lg:text-left max-w-full">
+              Phạm Tấn Thịnh
             </h1>
-            <h2 className="text-sm uppercase tracking-[0.2em] text-orange-400 mb-8 font-semibold">
+            <h2 className="text-sm md:text-base uppercase tracking-[0.2em] text-orange-400 mb-6 xl:mb-8 font-semibold text-center lg:text-left break-words">
               Senior Video Editor & Founder 43MM
             </h2>
-            <p className="text-gray-400/90 mb-10 leading-relaxed font-light">
+            <p className="text-gray-400/90 mb-8 xl:mb-10 leading-relaxed font-light text-center lg:text-left max-w-full break-words">
               Coming from an IT background at FPT University with a strong
               passion for visual arts and video editing. From a Junior position
               to a Senior Video Editor, I continually strive to create
               high-quality content alongside the independent team at 43MM.
             </p>
 
-            <div className="flex flex-col gap-5">
-              <div className="flex items-center gap-4 text-gray-400">
+            <div className="flex flex-col gap-4 xl:gap-5 items-center lg:items-start w-full">
+              <div className="flex items-center gap-4 text-gray-400 w-full justify-center lg:justify-start">
                 <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl flex-shrink-0 backdrop-blur-sm">
                   <Calendar size={18} className="text-orange-400" />
                 </div>
-                <span className="font-medium text-base tracking-wide">
+                <span className="font-medium text-base tracking-wide break-words">
                   Nov 26, 2000
                 </span>
               </div>
-              <div className="flex items-center gap-4 text-gray-400">
+              <div className="flex items-center gap-4 text-gray-400 w-full justify-center lg:justify-start">
                 <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl flex-shrink-0 backdrop-blur-sm">
                   <MapPin size={18} className="text-orange-400" />
                 </div>
-                <span className="font-medium text-base tracking-wide">
+                <span className="font-medium text-base tracking-wide break-words">
                   Da Nang, VN
                 </span>
               </div>
               <a
                 href="tel:0932444284"
-                className="group flex items-center gap-4 text-gray-400 hover:text-white transition-colors w-max max-w-full"
+                className="group flex items-center gap-4 text-gray-400 hover:text-white transition-colors w-max max-w-full mx-auto lg:mx-0"
               >
                 <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl group-hover:bg-orange-500/20 group-hover:border-orange-500/50 transition-colors flex-shrink-0 backdrop-blur-sm">
                   <Phone
@@ -411,13 +551,13 @@ export default function App() {
                     className="text-orange-400 group-hover:text-orange-300 transition-colors"
                   />
                 </div>
-                <span className="font-medium text-base tracking-wide transition-colors">
+                <span className="font-medium text-base tracking-wide transition-colors break-words">
                   0932 444 284
                 </span>
               </a>
               <a
                 href="mailto:thinhtri.2611@gmail.com"
-                className="group flex items-center gap-4 text-gray-400 hover:text-white transition-colors w-max max-w-full"
+                className="group flex items-center gap-4 text-gray-400 hover:text-white transition-colors w-max max-w-full mx-auto lg:mx-0"
               >
                 <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl group-hover:bg-orange-500/20 group-hover:border-orange-500/50 transition-colors flex-shrink-0 backdrop-blur-sm">
                   <Mail
@@ -425,7 +565,7 @@ export default function App() {
                     className="text-orange-400 group-hover:text-orange-300 transition-colors"
                   />
                 </div>
-                <span className="font-medium text-base tracking-wide transition-colors pb-0.5 truncate border-b border-transparent group-hover:border-white">
+                <span className="font-medium text-base tracking-wide transition-colors pb-0.5 truncate border-b border-transparent group-hover:border-white break-words max-w-[200px] sm:max-w-none">
                   thinhtri.2611@gmail.com
                 </span>
               </a>
@@ -440,7 +580,7 @@ export default function App() {
               <img
                 src={portraitImage}
                 alt="Phạm Tấn Thịnh"
-                className="w-12 h-12 rounded-full object-cover border-2 border-white/10 hover:border-orange-500 hover:shadow-[0_0_15px_rgba(249,115,22,0.6)] transition-all"
+                className="w-14 h-14 rounded-full object-cover object-[center_15%] border-2 border-white/10 hover:border-orange-500 hover:shadow-[0_0_15px_rgba(249,115,22,0.6)] transition-all"
               />
             </div>
           )}
@@ -448,10 +588,10 @@ export default function App() {
 
         {/* --- CỘT PHẢI (NỘI DUNG CHI TIẾT - GLASSMORPHISM) --- */}
         <div
-          className={`relative z-10 transition-all duration-500 ease-in-out bg-white/[0.02] backdrop-blur-2xl shadow-[-20px_0_40px_rgba(0,0,0,0.5)] border-l border-white/5 p-6 md:p-12 lg:p-20 
+          className={`relative z-10 transition-all duration-500 ease-in-out bg-white/[0.02] backdrop-blur-[80px] shadow-[-20px_0_40px_rgba(0,0,0,0.5)] border-l border-white/5 p-6 md:p-12 lg:p-20 
                         ${
                           isSidebarCollapsed
-                            ? "w-full lg:w-[calc(100%-80px)]"
+                            ? "w-full lg:w-[calc(100%-100px)]"
                             : "w-full lg:w-[60%]"
                         } `}
         >
@@ -466,17 +606,22 @@ export default function App() {
             Back to Home
           </button>
 
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight text-white drop-shadow-md">
+          <div className="max-w-4xl mx-auto w-full">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 tracking-tight text-white drop-shadow-md break-words max-w-full">
               {details.title}
             </h1>
-            <div className="border-t border-white/10 pt-12 mt-12 grid gap-8">
+            {details.company && (
+              <h2 className="text-lg md:text-xl text-orange-400 font-semibold mb-6 uppercase tracking-widest break-words">
+                {details.company}
+              </h2>
+            )}
+            <div className="border-t border-white/10 pt-10 mt-6 grid gap-8 w-full">
               {details.overview && (
-                <section className="mb-8">
+                <section className="mb-8 w-full">
                   <h3 className="text-sm font-bold uppercase tracking-widest text-orange-500 mb-6 drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]">
                     Overview
                   </h3>
-                  <p className="text-gray-300 leading-relaxed text-lg font-light">
+                  <p className="text-gray-300 leading-relaxed text-lg font-light break-words">
                     {details.overview}
                   </p>
                 </section>
@@ -487,7 +632,7 @@ export default function App() {
                 return (
                   <div
                     key={idx}
-                    className="p-8 border border-white/10 rounded-3xl bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(249,115,22,0.05)] transition-all duration-500"
+                    className="p-6 md:p-8 border border-white/10 rounded-3xl bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(249,115,22,0.05)] transition-all duration-500 w-full overflow-hidden"
                   >
                     {embedUrl && (
                       <div className="w-full aspect-video rounded-2xl overflow-hidden bg-black mb-8 relative shadow-2xl border border-white/5">
@@ -499,7 +644,7 @@ export default function App() {
                         ></iframe>
                       </div>
                     )}
-                    <h4 className="text-2xl font-bold text-white">
+                    <h4 className="text-2xl font-bold text-white break-words">
                       {proj.name}
                     </h4>
 
@@ -528,6 +673,7 @@ export default function App() {
     );
   }
 
+  // --- TRANG CHỦ (HOME) ---
   const lineStyles = getLineStyles(hoveredItem);
   const activeYears = getActiveYears(hoveredItem);
 
@@ -544,19 +690,19 @@ export default function App() {
     <div className="relative flex flex-col lg:flex-row min-h-screen font-sans text-white selection:bg-orange-500/30 selection:text-orange-200 bg-[#050505]">
       <AtmosphericBackground />
 
-      {/* CỘT TRÁI (SIDEBAR) */}
+      {/* --- CỘT TRÁI (SIDEBAR) TRONG TRANG CHỦ --- */}
       <div
-        className={`relative z-50 p-10 md:p-20 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
+        className={`relative z-50 p-6 md:p-10 lg:p-12 xl:p-20 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
                       ${
                         isSidebarCollapsed
-                          ? "w-full lg:w-[80px] px-2 md:px-2 lg:px-2 items-center"
+                          ? "w-full lg:w-[100px] px-4 md:px-4 lg:px-4 items-center"
                           : "w-full lg:w-[40%]"
                       } `}
       >
         {isSidebarCollapsed && (
           <button
             onClick={() => handlePageChange("home")}
-            className="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-orange-500 text-white p-2 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-[100] hover:bg-orange-400 transition-colors hidden lg:block"
+            className="absolute top-1/2 -right-5 transform -translate-y-1/2 bg-orange-500 text-white p-2.5 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-[100] hover:bg-orange-400 transition-colors hidden lg:block"
             title="Expand Profile"
           >
             <ChevronsRight size={20} />
@@ -564,50 +710,52 @@ export default function App() {
         )}
 
         <div
-          className={`transition-opacity duration-300 ${
+          className={`transition-opacity duration-300 w-full max-w-full ${
             isSidebarCollapsed
               ? "opacity-0 hidden lg:block lg:opacity-0 lg:w-0 lg:h-0 overflow-hidden"
-              : "opacity-100 w-full"
+              : "opacity-100"
           }`}
         >
+          {/* Ảnh Responsive giống hệt trang chi tiết */}
           <img
             src={portraitImage}
             alt="Phạm Tấn Thịnh"
-            className="w-32 h-32 rounded-full object-cover border-[3px] border-white/10 mb-8 shadow-[0_0_30px_rgba(249,115,22,0.15)]"
+            className="w-[240px] sm:w-[280px] md:w-[320px] lg:w-[260px] xl:w-[340px] aspect-square rounded-full object-cover object-[center_15%] flex-shrink-0 border-[4px] border-white/10 mb-6 xl:mb-10 shadow-[0_0_40px_rgba(249,115,22,0.2)] mx-auto lg:mx-0 max-w-full h-auto transition-all duration-500"
           />
-          <h1 className="text-4xl md:text-6xl font-bold mb-2 whitespace-nowrap tracking-tight text-white">
-            Thịnh.
+
+          <h1 className="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold mb-3 tracking-tight text-white break-words text-center lg:text-left max-w-full">
+            Phạm Tấn Thịnh
           </h1>
-          <h2 className="text-sm uppercase tracking-[0.2em] text-orange-400 mb-8 font-semibold">
+          <h2 className="text-sm md:text-base uppercase tracking-[0.2em] text-orange-400 mb-6 xl:mb-8 font-semibold text-center lg:text-left break-words">
             Senior Video Editor & Founder 43MM
           </h2>
-          <p className="text-gray-400/90 mb-10 leading-relaxed font-light">
+          <p className="text-gray-400/90 mb-8 xl:mb-10 leading-relaxed font-light text-center lg:text-left max-w-full break-words">
             Coming from an IT background at FPT University with a strong passion
             for visual arts and video editing. From a Junior position to a
             Senior Video Editor, I continually strive to create high-quality
             content alongside the independent team at 43MM.
           </p>
 
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-4 text-gray-400">
+          <div className="flex flex-col gap-4 xl:gap-5 items-center lg:items-start w-full">
+            <div className="flex items-center gap-4 text-gray-400 w-full justify-center lg:justify-start">
               <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl flex-shrink-0 backdrop-blur-sm">
                 <Calendar size={18} className="text-orange-400" />
               </div>
-              <span className="font-medium text-base tracking-wide">
+              <span className="font-medium text-base tracking-wide break-words">
                 Nov 26, 2000
               </span>
             </div>
-            <div className="flex items-center gap-4 text-gray-400">
+            <div className="flex items-center gap-4 text-gray-400 w-full justify-center lg:justify-start">
               <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl flex-shrink-0 backdrop-blur-sm">
                 <MapPin size={18} className="text-orange-400" />
               </div>
-              <span className="font-medium text-base tracking-wide">
+              <span className="font-medium text-base tracking-wide break-words">
                 Da Nang, VN
               </span>
             </div>
             <a
               href="tel:0932444284"
-              className="group flex items-center gap-4 text-gray-400 hover:text-white transition-colors w-max max-w-full"
+              className="group flex items-center gap-4 text-gray-400 hover:text-white transition-colors w-max max-w-full mx-auto lg:mx-0"
             >
               <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl group-hover:bg-orange-500/20 group-hover:border-orange-500/50 transition-colors flex-shrink-0 backdrop-blur-sm">
                 <Phone
@@ -615,13 +763,13 @@ export default function App() {
                   className="text-orange-400 group-hover:text-orange-300 transition-colors"
                 />
               </div>
-              <span className="font-medium text-base tracking-wide transition-colors">
+              <span className="font-medium text-base tracking-wide transition-colors break-words">
                 0932 444 284
               </span>
             </a>
             <a
               href="mailto:thinhtri.2611@gmail.com"
-              className="group flex items-center gap-4 text-gray-400 hover:text-white transition-colors w-max max-w-full"
+              className="group flex items-center gap-4 text-gray-400 hover:text-white transition-colors w-max max-w-full mx-auto lg:mx-0"
             >
               <div className="p-2.5 bg-white/5 border border-white/5 rounded-xl group-hover:bg-orange-500/20 group-hover:border-orange-500/50 transition-colors flex-shrink-0 backdrop-blur-sm">
                 <Mail
@@ -629,7 +777,7 @@ export default function App() {
                   className="text-orange-400 group-hover:text-orange-300 transition-colors"
                 />
               </div>
-              <span className="font-medium text-base tracking-wide transition-colors pb-0.5 truncate border-b border-transparent group-hover:border-white">
+              <span className="font-medium text-base tracking-wide transition-colors pb-0.5 truncate border-b border-transparent group-hover:border-white break-words max-w-[200px] sm:max-w-none">
                 thinhtri.2611@gmail.com
               </span>
             </a>
@@ -644,26 +792,26 @@ export default function App() {
             <img
               src={portraitImage}
               alt="Phạm Tấn Thịnh"
-              className="w-12 h-12 rounded-full object-cover border-2 border-white/10 hover:border-orange-500 hover:shadow-[0_0_15px_rgba(249,115,22,0.6)] transition-all"
+              className="w-14 h-14 rounded-full object-cover object-[center_15%] border-2 border-white/10 hover:border-orange-500 hover:shadow-[0_0_15px_rgba(249,115,22,0.6)] transition-all"
             />
           </div>
         )}
       </div>
 
-      {/* CỘT PHẢI (NỘI DUNG - DARK GLASS) */}
+      {/* --- CỘT PHẢI (NỘI DUNG - DARK GLASS) --- */}
       <div
-        className={`relative z-10 transition-all duration-500 ease-in-out bg-white/[0.02] backdrop-blur-3xl shadow-[-20px_0_40px_rgba(0,0,0,0.5)] border-l border-white/5 min-h-screen
+        className={`relative z-10 transition-all duration-500 ease-in-out bg-white/[0.02] backdrop-blur-[80px] shadow-[-20px_0_40px_rgba(0,0,0,0.5)] border-l border-white/5 min-h-screen
                       ${
                         isSidebarCollapsed
-                          ? "w-full lg:w-[calc(100%-80px)]"
+                          ? "w-full lg:w-[calc(100%-100px)]"
                           : "w-full lg:w-[60%]"
                       } `}
       >
-        {/* HEADER TABS */}
-        <div className="flex justify-between px-10 py-8 border-b border-white/10 sticky top-0 bg-white/[0.01] backdrop-blur-2xl z-50">
+        {/* HEADER TABS - KÍNH MỜ GẮT */}
+        <div className="flex justify-between px-6 md:px-10 py-6 md:py-8 border-b border-white/10 sticky top-0 bg-white/[0.02] backdrop-blur-[1000px] z-[60]">
           <button
             onClick={() => setActiveTab("experience")}
-            className={`text-xl md:text-2xl font-bold transition-colors ${
+            className={`text-lg md:text-2xl font-bold transition-colors ${
               activeTab === "experience"
                 ? "text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]"
                 : "text-white/30 hover:text-orange-400"
@@ -673,7 +821,7 @@ export default function App() {
           </button>
           <button
             onClick={() => setActiveTab("projects")}
-            className={`text-xl md:text-2xl font-bold transition-colors ${
+            className={`text-lg md:text-2xl font-bold transition-colors ${
               activeTab === "projects"
                 ? "text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]"
                 : "text-white/30 hover:text-orange-400"
@@ -685,8 +833,8 @@ export default function App() {
 
         {/* CONTENT */}
         <div
-          className={`py-12 transition-all duration-500 ${
-            isSidebarCollapsed ? "px-6 md:px-12 lg:px-20" : "px-10"
+          className={`py-12 transition-all duration-500 w-full ${
+            isSidebarCollapsed ? "px-6 md:px-12 lg:px-20" : "px-6 md:px-10"
           }`}
         >
           {activeTab === "experience" ? (
@@ -697,9 +845,9 @@ export default function App() {
               const isActiveYear = activeYears.includes(row.year);
 
               return (
-                <div key={row.id} className="flex min-h-[140px]">
+                <div key={row.id} className="flex min-h-[140px] w-full">
                   <div
-                    className={`w-24 text-right pr-6 pt-[24px] font-bold tracking-widest transition-colors duration-500 drop-shadow-sm ${
+                    className={`w-16 md:w-24 text-right pr-4 md:pr-6 pt-[24px] font-bold tracking-widest transition-colors duration-500 drop-shadow-sm text-sm md:text-base flex-shrink-0 ${
                       isActiveYear
                         ? "text-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]"
                         : "text-white/20"
@@ -708,12 +856,12 @@ export default function App() {
                     {row.year}
                   </div>
 
-                  <div className="w-24 relative">
+                  <div className="w-8 md:w-16 lg:w-24 relative flex-shrink-0">
                     {row.renderLines(lineStyles)}
                   </div>
 
                   <div
-                    className="flex-1 pl-6 pt-[20px] pb-10"
+                    className="flex-1 pl-4 md:pl-6 pt-[20px] pb-10 min-w-0"
                     onMouseEnter={() => setHoveredItem(row.contentId)}
                     onMouseLeave={() => setHoveredItem(null)}
                   >
@@ -725,7 +873,7 @@ export default function App() {
                         }}
                       >
                         <h4
-                          className={`text-2xl font-bold flex items-center gap-2 transition-all duration-300 ${
+                          className={`text-xl md:text-2xl font-bold flex items-center gap-2 transition-all duration-300 break-words max-w-full ${
                             hoveredItem === job.timelineId
                               ? "text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]"
                               : "text-white/90"
@@ -735,7 +883,7 @@ export default function App() {
                           {job.hasDetails && (
                             <ArrowUpRight
                               size={20}
-                              className={`opacity-0 -translate-x-2 transition-all duration-300 ${
+                              className={`opacity-0 -translate-x-2 transition-all duration-300 flex-shrink-0 ${
                                 hoveredItem === job.timelineId
                                   ? "opacity-100 translate-x-0 text-orange-500"
                                   : ""
@@ -744,7 +892,7 @@ export default function App() {
                           )}
                         </h4>
                         {job.company && (
-                          <span className="text-lg text-gray-500 font-medium block mt-1">
+                          <span className="text-base md:text-lg text-gray-500 font-medium block mt-1 break-words">
                             {job.company}
                           </span>
                         )}
@@ -769,7 +917,7 @@ export default function App() {
               );
             })
           ) : (
-            <div className="flex flex-col gap-16 w-full max-w-full overflow-hidden">
+            <div className="flex flex-col gap-12 md:gap-16 w-full max-w-full overflow-hidden">
               <style>{`
                 .hide-scrollbar::-webkit-scrollbar { display: none; }
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -781,7 +929,7 @@ export default function App() {
                   <button
                     key={idx}
                     onClick={() => setSelectedRoleFilter(role)}
-                    className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300 flex-shrink-0 snap-start backdrop-blur-md ${
+                    className={`px-4 md:px-5 py-2 md:py-2.5 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-300 flex-shrink-0 snap-start backdrop-blur-md ${
                       selectedRoleFilter === role
                         ? "bg-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.6)] border border-orange-400"
                         : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10 hover:border-white/20"
@@ -792,6 +940,7 @@ export default function App() {
                 ))}
               </div>
 
+              {/* DANH SÁCH DỰ ÁN (RENDER BẰNG COMPONENT MỚI) */}
               {[
                 { title: "Personal Projects", id: 5 },
                 { title: "43MM", id: 2 },
@@ -815,89 +964,22 @@ export default function App() {
                 if (filteredProjects.length === 0) return null;
 
                 return (
-                  <div
+                  <ProjectCategorySection
                     key={category.id}
-                    className="w-full animate-in fade-in duration-500"
-                  >
-                    <h3 className="text-xl font-bold uppercase tracking-widest mb-8 text-white flex items-center gap-3 drop-shadow-md">
-                      <span className="w-2 h-2 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.8)]"></span>
-                      {category.title}
-                    </h3>
-
-                    <div className="flex overflow-x-auto gap-8 pb-8 snap-x snap-mandatory hide-scrollbar items-stretch pr-10">
-                      {filteredProjects.map((proj, idx) => {
-                        const embedUrl = getMediaEmbedUrl(proj.link);
-                        return (
-                          <div
-                            key={idx}
-                            className="w-[85vw] md:w-[450px] flex-shrink-0 snap-start p-8 border border-white/10 rounded-[2rem] bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(249,115,22,0.08)] transition-all duration-500 group flex flex-col backdrop-blur-sm"
-                          >
-                            {embedUrl && (
-                              <div className="w-full aspect-video rounded-2xl overflow-hidden bg-black mb-8 shadow-2xl border border-white/5 relative flex-shrink-0 group-hover:scale-[1.02] transition-transform duration-500">
-                                <iframe
-                                  className="absolute top-0 left-0 w-full h-full"
-                                  src={embedUrl}
-                                  title={proj.name}
-                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                  allowFullScreen
-                                ></iframe>
-                              </div>
-                            )}
-
-                            <div className="mb-6 flex-1">
-                              {proj.link ? (
-                                <a
-                                  href={proj.link}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-2xl font-bold flex items-start justify-between gap-4 group-hover:text-orange-400 transition-colors w-full text-white"
-                                >
-                                  <span className="line-clamp-2">
-                                    {proj.name}
-                                  </span>
-                                  <ExternalLink
-                                    size={24}
-                                    className="text-gray-500 group-hover:text-orange-500 transition-colors flex-shrink-0 mt-1"
-                                  />
-                                </a>
-                              ) : (
-                                <h4 className="text-2xl font-bold text-white line-clamp-2">
-                                  {proj.name}
-                                </h4>
-                              )}
-                            </div>
-
-                            {proj.roles && proj.roles.length > 0 && (
-                              <div className="flex flex-wrap gap-2 items-center mt-auto pt-6 border-t border-white/10">
-                                <span className="text-xs text-gray-500 uppercase tracking-widest mr-2 font-bold">
-                                  Role
-                                </span>
-                                {proj.roles.map((role, roleIdx) => (
-                                  <span
-                                    key={roleIdx}
-                                    className="px-3 py-1.5 bg-orange-500/10 text-orange-400 text-xs font-bold uppercase tracking-widest rounded-md border border-orange-500/20"
-                                  >
-                                    {role}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                    categoryTitle={category.title}
+                    projects={filteredProjects}
+                  />
                 );
               })}
             </div>
           )}
 
           {activeTab === "experience" && (
-            <div className="mt-16 pt-16 border-t border-white/10 flex flex-col items-center text-center">
-              <p className="text-gray-400 font-medium mb-8">
+            <div className="mt-12 md:mt-16 pt-12 md:pt-16 border-t border-white/10 flex flex-col items-center text-center w-full">
+              <p className="text-gray-400 font-medium mb-6 md:mb-8 break-words max-w-full">
                 Want to know more about my skills?
               </p>
-              <button className="px-10 py-5 bg-white/10 text-white border border-white/10 backdrop-blur-md uppercase tracking-widest text-sm rounded-full font-bold hover:bg-orange-500 hover:border-orange-500 transition-all duration-300 shadow-xl hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] hover:-translate-y-1">
+              <button className="px-8 md:px-10 py-4 md:py-5 bg-white/10 text-white border border-white/10 backdrop-blur-md uppercase tracking-widest text-xs md:text-sm rounded-full font-bold hover:bg-orange-500 hover:border-orange-500 transition-all duration-300 shadow-xl hover:shadow-[0_0_25px_rgba(249,115,22,0.5)] hover:-translate-y-1">
                 Download CV (PDF)
               </button>
             </div>
