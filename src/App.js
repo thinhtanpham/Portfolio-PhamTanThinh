@@ -17,9 +17,9 @@ import {
 
 // Tạm thay thế bằng link ảnh online để Canvas có thể biên dịch thành công.
 // Khi đưa code về CodeSandbox của bạn, hãy bỏ comment dòng import bên dưới và xóa dòng const đi nhé.
-import portraitImage from "./_ANA9050-Edit resize.png";
-//const portraitImage =
-//  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=800&q=80";
+// import portraitImage from "./_ANA9050-Edit resize.png";
+const portraitImage =
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=800&q=80";
 
 // --- MOCK DATA ---
 const WORK_HISTORY = [
@@ -76,49 +76,49 @@ const PROJECT_DETAILS = {
     projectSectionTitle: "Featured Projects",
     projects: [
       {
-        name: "The Chitrakoot Model: Transforming Rural Eye Care | Appasamy Associates",
-        link: "https://www.youtube.com/watch?v=ymfaJw6wvDo",
-        roles: ["Videographer", "Video Editor"],
-      },
-      {
-        name: "Cinematic Showcase",
+        name: null,
         link: "https://www.youtube.com/shorts/BM0qG2HGcqw",
-        roles: ["Video Editor", "Color Grading"],
+        roles: ["Video Editor"],
         type: "vertical",
       },
       {
-        name: "Creative Process",
+        name: null,
         link: "https://www.youtube.com/shorts/6FOmw30Xl-s",
         roles: ["Video Editor"],
         type: "vertical",
       },
       {
-        name: "Project Horizon",
+        name: null,
+        link: "https://www.youtube.com/watch?v=ymfaJw6wvDo",
+        roles: ["Videographer", "Video Editor"],
+      },
+      {
+        name: null,
         link: "https://www.youtube.com/watch?v=9UUIvl_iVLw",
         roles: ["Video Editor"],
       },
       {
-        name: "Event Highlights",
+        name: null,
         link: "https://www.youtube.com/watch?v=rl1BqzEJgWE",
         roles: ["Video Editor"],
       },
       {
-        name: "Sizzle Reel 2023",
+        name: null,
         link: "https://youtu.be/krzZfpxVreM?si=hmFk0ys8CaryL6tK",
         roles: ["Art Director", "Animator", "Video Editor"],
       },
       {
-        name: "Visual Campaign V1",
+        name: null,
         link: "https://www.youtube.com/watch?v=O-08UGUZBVc",
         roles: ["Art Director", "Video Editor"],
       },
       {
-        name: "Brand Identity",
+        name: null,
         link: "https://youtu.be/Jcv7nyTPg7Q?si=kAiUqVV7HOkz87pW",
         roles: ["Art Director"],
       },
       {
-        name: "Product Reveal",
+        name: null,
         link: "https://youtu.be/Ri3SmIU4V5Q?si=uXhiSMgIPZ7aMXqn",
         roles: ["Art Director"],
       },
@@ -1056,7 +1056,6 @@ export default function App() {
                 ))}
               </div>
 
-              {/* DANH SÁCH DỰ ÁN (RENDER BẰNG COMPONENT MỚI) */}
               {[
                 { title: "Personal Projects", id: 5 },
                 { title: "43MM", id: 2 },
