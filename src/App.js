@@ -57,8 +57,8 @@ const WORK_HISTORY = [
     id: 4,
     timelineId: "robot",
     year: "From 2018",
-    role: "Participant",
-    company: "Da Nang Robonic Competition",
+    role: "Da Nang Robonic Competition",
+    company: "Participant",
     description: "",
     skills: ["Robotics", "Teamwork", "Hardware"],
     hasDetails: false,
@@ -1056,6 +1056,7 @@ export default function App() {
                 ))}
               </div>
 
+              {/* DANH SÁCH DỰ ÁN (RENDER BẰNG COMPONENT MỚI) */}
               {[
                 { title: "Personal Projects", id: 5 },
                 { title: "43MM", id: 2 },
