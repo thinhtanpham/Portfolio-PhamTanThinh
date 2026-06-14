@@ -15,10 +15,11 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-// Đã tạm thay thế bằng link ảnh online để Canvas có thể biên dịch thành công.
+// Tạm thay thế bằng link ảnh online để Canvas có thể biên dịch thành công.
 // Khi đưa code về CodeSandbox của bạn, hãy bỏ comment dòng import bên dưới và xóa dòng const đi nhé.
-// import portraitImage from "./_ANA9050-Edit resize.png";
 import portraitImage from "./_ANA9050-Edit resize.png";
+//const portraitImage =
+//  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=800&q=80";
 
 // --- MOCK DATA ---
 const WORK_HISTORY = [
@@ -72,34 +73,52 @@ const PROJECT_DETAILS = {
     overview:
       "With a mindset of continuous innovation, I have built significant milestones on my journey from Junior to Senior Video Editor. I am proud to be the pioneer of the 'Sizzle Reel' product line, standardizing the workflow between the Video and Animation departments, and successfully applying 3D and AI into practical production. As a result, I frequently take on the role of Art Director to lead the visual aspect of groundbreaking creative campaigns. More than just a professional, I also carry the mission of 'passing the torch' – organizing training programs and directly guiding new personnel, contributing to building a strong team.",
     tools: ["Premiere Pro", "After Effects", "DaVinci Resolve", "Audition"],
+    projectSectionTitle: "Featured Projects",
     projects: [
       {
-        name: "Short: Cinematic Showcase",
-        link: "https://www.youtube.com/shorts/BM0qG2HGcqw",
-        roles: ["Video Editor", "Color Grading"],
+        name: "The Chitrakoot Model: Transforming Rural Eye Care | Appasamy Associates",
+        link: "https://www.youtube.com/watch?v=ymfaJw6wvDo",
+        roles: ["Videographer", "Video Editor"],
       },
       {
-        name: "Short: Creative Process",
+        name: "Cinematic Showcase",
+        link: "https://www.youtube.com/shorts/BM0qG2HGcqw",
+        roles: ["Video Editor", "Color Grading"],
+        type: "vertical",
+      },
+      {
+        name: "Creative Process",
         link: "https://www.youtube.com/shorts/6FOmw30Xl-s",
+        roles: ["Video Editor"],
+        type: "vertical",
+      },
+      {
+        name: "Project Horizon",
+        link: "https://www.youtube.com/watch?v=9UUIvl_iVLw",
         roles: ["Video Editor"],
       },
       {
-        name: null,
+        name: "Event Highlights",
+        link: "https://www.youtube.com/watch?v=rl1BqzEJgWE",
+        roles: ["Video Editor"],
+      },
+      {
+        name: "Sizzle Reel 2023",
         link: "https://youtu.be/krzZfpxVreM?si=hmFk0ys8CaryL6tK",
         roles: ["Art Director", "Animator", "Video Editor"],
       },
       {
-        name: null,
-        link: "https://youtu.be/krzZfpxVreM?si=hmFk0ys8CaryL6tK",
+        name: "Visual Campaign V1",
+        link: "https://www.youtube.com/watch?v=O-08UGUZBVc",
         roles: ["Art Director", "Video Editor"],
       },
       {
-        name: null,
+        name: "Brand Identity",
         link: "https://youtu.be/Jcv7nyTPg7Q?si=kAiUqVV7HOkz87pW",
         roles: ["Art Director"],
       },
       {
-        name: null,
+        name: "Product Reveal",
         link: "https://youtu.be/Ri3SmIU4V5Q?si=uXhiSMgIPZ7aMXqn",
         roles: ["Art Director"],
       },
@@ -316,8 +335,9 @@ const AtmosphericBackground = () => (
   </div>
 );
 
-// --- COMPONENT MỚI: QUẢN LÝ DANH MỤC DỰ ÁN (CÓ SCROLL & XỔ XUỐNG) ---
-const ProjectCategorySection = ({ categoryTitle, projects }) => {
+// --- COMPONENT: QUẢN LÝ DANH MỤC DỰ ÁN (CÓ SCROLL NGANG & XỔ XUỐNG DẠNG LƯỚI) ---
+// Dùng cho Trang Chủ
+const ProjectCategoryScrollable = ({ categoryTitle, projects }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const scrollRef = useRef(null);
 
@@ -334,28 +354,28 @@ const ProjectCategorySection = ({ categoryTitle, projects }) => {
   if (!projects || projects.length === 0) return null;
 
   return (
-    <div className="w-full animate-in fade-in duration-500 mb-10 md:mb-14">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 md:mb-8">
+    <div className="w-full animate-in fade-in duration-500 mb-10 md:mb-14 relative">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 md:mb-8 px-4 md:px-0">
         <h3 className="text-lg md:text-xl font-bold uppercase tracking-widest text-white flex items-center gap-3 drop-shadow-md">
           <span className="w-2 h-2 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.8)]"></span>
           {categoryTitle}
         </h3>
 
-        {/* Cụm nút điều hướng & See All (Chỉ hiện khi có nhiều hơn 2 dự án) */}
+        {/* Nút điều hướng & See All */}
         {projects.length > 2 && (
           <div className="flex items-center gap-3 md:gap-4">
             {!isExpanded && (
-              <div className="hidden md:flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-2 z-40 relative">
                 <button
                   onClick={() => scroll("left")}
-                  className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-all text-gray-400 shadow-lg"
+                  className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-all text-gray-400 shadow-[0_0_20px_rgba(0,0,0,0.8)]"
                   title="Scroll Left"
                 >
                   <ChevronLeft size={20} />
                 </button>
                 <button
                   onClick={() => scroll("right")}
-                  className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-all text-gray-400 shadow-lg"
+                  className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-orange-500 hover:border-orange-500 hover:text-white transition-all text-gray-400 shadow-[0_0_20px_rgba(0,0,0,0.8)]"
                   title="Scroll Right"
                 >
                   <ChevronRight size={20} />
@@ -364,35 +384,161 @@ const ProjectCategorySection = ({ categoryTitle, projects }) => {
             )}
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 hover:bg-orange-500 hover:text-white text-orange-400 whitespace-nowrap"
+              className="text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 hover:bg-orange-500 hover:text-white text-orange-400 whitespace-nowrap z-40 relative"
             >
-              {isExpanded ? "Show Less" : "Show All"}
+              {isExpanded ? "Show Less" : "See All"}
             </button>
           </div>
         )}
       </div>
 
-      <div
-        ref={!isExpanded ? scrollRef : null}
-        className={
-          isExpanded
-            ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6 md:gap-8 w-full transition-all duration-500"
-            : "flex overflow-x-auto gap-6 md:gap-8 pb-8 snap-x snap-mandatory hide-scrollbar items-stretch pr-6 md:pr-10 w-full transition-all duration-500"
-        }
-      >
+      <div className="relative group w-full">
+        {/* Scroll Buttons cho màn hình nhỏ */}
+        {projects.length > 2 && !isExpanded && (
+          <>
+            <button
+              onClick={() => scroll("left")}
+              className="absolute -left-5 md:-left-8 top-1/2 -translate-y-1/2 z-40 md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#050505]/90 backdrop-blur-md border border-white/10 hover:bg-orange-500 hover:text-white transition-all text-gray-400 shadow-lg"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="absolute -right-5 md:-right-8 top-1/2 -translate-y-1/2 z-40 md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#050505]/90 backdrop-blur-md border border-white/10 hover:bg-orange-500 hover:text-white transition-all text-gray-400 shadow-lg"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </>
+        )}
+
+        <div
+          ref={!isExpanded ? scrollRef : null}
+          className={
+            isExpanded
+              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6 md:gap-8 w-full transition-all duration-500 items-start"
+              : "flex overflow-x-auto gap-6 md:gap-8 pb-8 snap-x snap-mandatory hide-scrollbar items-start w-full transition-all duration-500"
+          }
+          style={
+            !isExpanded
+              ? {
+                  maskImage:
+                    "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
+                  WebkitMaskImage:
+                    "linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)",
+                  paddingLeft: "2px",
+                  paddingRight: "2px",
+                }
+              : {}
+          }
+        >
+          {projects.map((proj, idx) => {
+            const embedUrl = getMediaEmbedUrl(proj.link);
+            const isVertical = proj.type === "vertical";
+
+            return (
+              <div
+                key={idx}
+                className={`p-6 md:p-8 border border-white/10 rounded-[2rem] bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(249,115,22,0.08)] transition-all duration-500 group flex flex-col backdrop-blur-sm overflow-hidden ${
+                  isExpanded
+                    ? "w-full"
+                    : isVertical
+                    ? "w-[75vw] sm:w-[260px] md:w-[280px] xl:w-[320px] flex-shrink-0 snap-center sm:snap-start"
+                    : "w-[85vw] sm:w-[350px] md:w-[400px] xl:w-[450px] flex-shrink-0 snap-center sm:snap-start"
+                }`}
+              >
+                {embedUrl && (
+                  <div
+                    className={`w-full rounded-2xl overflow-hidden bg-black mb-6 md:mb-8 shadow-2xl border border-white/5 relative flex-shrink-0 group-hover:scale-[1.02] transition-transform duration-500 ${
+                      isVertical ? "aspect-[9/16] mx-auto" : "aspect-video"
+                    }`}
+                  >
+                    <iframe
+                      className="absolute top-0 left-0 w-full h-full"
+                      src={embedUrl}
+                      title={proj.name}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                )}
+
+                <div className="mb-6 flex-1 w-full">
+                  {proj.link ? (
+                    <a
+                      href={proj.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xl md:text-2xl font-bold flex items-start justify-between gap-4 group-hover:text-orange-400 transition-colors w-full text-white break-words"
+                    >
+                      <span className="line-clamp-2">{proj.name}</span>
+                      <ExternalLink
+                        size={24}
+                        className="text-gray-500 group-hover:text-orange-500 transition-colors flex-shrink-0 mt-1"
+                      />
+                    </a>
+                  ) : (
+                    <h4 className="text-xl md:text-2xl font-bold text-white line-clamp-2 break-words">
+                      {proj.name}
+                    </h4>
+                  )}
+                </div>
+
+                {proj.roles && proj.roles.length > 0 && (
+                  <div className="flex flex-wrap gap-2 items-center mt-auto pt-6 border-t border-white/10 w-full">
+                    <span className="text-xs text-gray-500 uppercase tracking-widest mr-2 font-bold flex-shrink-0">
+                      Role
+                    </span>
+                    {proj.roles.map((role, roleIdx) => (
+                      <span
+                        key={roleIdx}
+                        className="px-2 md:px-3 py-1 md:py-1.5 bg-orange-500/10 text-orange-400 text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-md border border-orange-500/20 whitespace-nowrap"
+                      >
+                        {role}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- COMPONENT MỚI: QUẢN LÝ DANH MỤC DỰ ÁN (HIỂN THỊ DẠNG LƯỚI - CUỘN DỌC) ---
+// Dùng riêng cho trang chi tiết
+const ProjectCategoryGrid = ({ categoryTitle, projects }) => {
+  if (!projects || projects.length === 0) return null;
+
+  return (
+    <div className="w-full animate-in fade-in duration-500 mb-10 md:mb-14">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 md:mb-8">
+        <h3 className="text-lg md:text-xl font-bold uppercase tracking-widest text-white flex items-center gap-3 drop-shadow-md">
+          <span className="w-2 h-2 bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.8)]"></span>
+          {categoryTitle}
+        </h3>
+      </div>
+
+      <div className="flex flex-col gap-6 md:gap-8 w-full transition-all duration-500 items-start">
         {projects.map((proj, idx) => {
           const embedUrl = getMediaEmbedUrl(proj.link);
+          const isVertical = proj.type === "vertical";
+
           return (
             <div
               key={idx}
-              className={`p-6 md:p-8 border border-white/10 rounded-[2rem] bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(249,115,22,0.08)] transition-all duration-500 group flex flex-col backdrop-blur-sm overflow-hidden ${
-                isExpanded
-                  ? "w-full"
-                  : "w-[85vw] sm:w-[350px] md:w-[400px] xl:w-[450px] flex-shrink-0 snap-center sm:snap-start"
-              }`}
+              className={`p-6 md:p-8 border border-white/10 rounded-[2rem] bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(249,115,22,0.08)] transition-all duration-500 group flex flex-col backdrop-blur-sm overflow-hidden w-full`}
             >
               {embedUrl && (
-                <div className="w-full aspect-video rounded-2xl overflow-hidden bg-black mb-6 md:mb-8 shadow-2xl border border-white/5 relative flex-shrink-0 group-hover:scale-[1.02] transition-transform duration-500">
+                <div
+                  className={`w-full rounded-2xl overflow-hidden bg-black mb-6 md:mb-8 shadow-2xl border border-white/5 relative flex-shrink-0 group-hover:scale-[1.02] transition-transform duration-500 ${
+                    isVertical
+                      ? "aspect-[9/16] mx-auto max-w-[280px]"
+                      : "aspect-video"
+                  }`}
+                >
                   <iframe
                     className="absolute top-0 left-0 w-full h-full"
                     src={embedUrl}
@@ -474,12 +620,12 @@ export default function App() {
   if (activePage !== "home" && PROJECT_DETAILS[activePage]) {
     const details = PROJECT_DETAILS[activePage];
     return (
-      <div className="relative flex flex-col lg:flex-row min-h-screen font-sans text-white selection:bg-orange-500/30 selection:text-orange-200 bg-[#050505]">
+      <div className="relative flex flex-col lg:flex-row min-h-screen font-sans text-white selection:bg-orange-500/30 selection:text-orange-200 bg-[#050505] overflow-x-hidden">
         <AtmosphericBackground />
 
         {/* --- CỘT TRÁI (SIDEBAR) TRONG TRANG CHI TIẾT --- */}
         <div
-          className={`relative z-50 p-6 md:p-10 lg:p-12 xl:p-20 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
+          className={`relative z-50 p-6 md:p-10 lg:p-12 xl:p-20 lg:fixed lg:top-0 lg:left-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
                         ${
                           isSidebarCollapsed
                             ? "w-full lg:w-[100px] px-4 md:px-4 lg:px-4 items-center"
@@ -489,7 +635,7 @@ export default function App() {
           {isSidebarCollapsed && (
             <button
               onClick={() => handlePageChange("home")}
-              className="absolute top-1/2 -right-5 transform -translate-y-1/2 bg-orange-500 text-white p-2.5 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-[100] hover:bg-orange-400 transition-colors hidden lg:block"
+              className="fixed top-1/2 left-[85px] transform -translate-y-1/2 bg-orange-500 text-white p-2.5 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-[100] hover:bg-orange-400 transition-colors hidden lg:block"
               title="Expand Profile"
             >
               <ChevronsRight size={20} />
@@ -574,7 +720,7 @@ export default function App() {
 
           {isSidebarCollapsed && (
             <div
-              className="mt-8 relative z-10 hidden lg:block transition-all duration-500 cursor-pointer"
+              className="fixed bottom-8 left-[22px] z-10 hidden lg:block transition-all duration-500 cursor-pointer"
               onClick={() => handlePageChange("home")}
             >
               <img
@@ -591,8 +737,8 @@ export default function App() {
           className={`relative z-10 transition-all duration-500 ease-in-out bg-white/[0.02] backdrop-blur-[80px] shadow-[-20px_0_40px_rgba(0,0,0,0.5)] border-l border-white/5 p-6 md:p-12 lg:p-20 
                         ${
                           isSidebarCollapsed
-                            ? "w-full lg:w-[calc(100%-100px)]"
-                            : "w-full lg:w-[60%]"
+                            ? "lg:ml-[100px] w-full lg:w-[calc(100%-100px)]"
+                            : "lg:ml-[40%] w-full lg:w-[60%]"
                         } `}
         >
           <button
@@ -607,7 +753,7 @@ export default function App() {
           </button>
 
           <div className="max-w-4xl mx-auto w-full">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 tracking-tight text-white drop-shadow-md break-words max-w-full">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight text-white drop-shadow-md break-words max-w-full">
               {details.title}
             </h1>
             {details.company && (
@@ -615,7 +761,8 @@ export default function App() {
                 {details.company}
               </h2>
             )}
-            <div className="border-t border-white/10 pt-10 mt-6 grid gap-8 w-full">
+
+            <div className="border-t border-white/10 pt-12 mt-12 grid gap-8 w-full">
               {details.overview && (
                 <section className="mb-8 w-full">
                   <h3 className="text-sm font-bold uppercase tracking-widest text-orange-500 mb-6 drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]">
@@ -627,45 +774,15 @@ export default function App() {
                 </section>
               )}
 
-              {details.projects?.map((proj, idx) => {
-                const embedUrl = getMediaEmbedUrl(proj.link);
-                return (
-                  <div
-                    key={idx}
-                    className="p-6 md:p-8 border border-white/10 rounded-3xl bg-white/5 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(249,115,22,0.05)] transition-all duration-500 w-full overflow-hidden"
-                  >
-                    {embedUrl && (
-                      <div className="w-full aspect-video rounded-2xl overflow-hidden bg-black mb-8 relative shadow-2xl border border-white/5">
-                        <iframe
-                          className="absolute top-0 left-0 w-full h-full"
-                          src={embedUrl}
-                          title={proj.name}
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                    )}
-                    <h4 className="text-2xl font-bold text-white break-words">
-                      {proj.name}
-                    </h4>
-
-                    {proj.roles && proj.roles.length > 0 && (
-                      <div className="flex flex-wrap gap-2 items-center mt-6 pt-6 border-t border-white/10">
-                        <span className="text-xs text-gray-500 uppercase tracking-widest mr-2 font-bold">
-                          Role
-                        </span>
-                        {proj.roles.map((role, roleIdx) => (
-                          <span
-                            key={roleIdx}
-                            className="px-3 py-1.5 bg-orange-500/10 text-orange-400 text-xs font-bold uppercase tracking-widest rounded-md border border-orange-500/20 backdrop-blur-md"
-                          >
-                            {role}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+              {details.projects && details.projects.length > 0 && (
+                <div className="w-full">
+                  {/* Ở trang chi tiết, gọi Component dạng Lưới (Grid) */}
+                  <ProjectCategoryGrid
+                    categoryTitle={details.projectSectionTitle || "Projects"}
+                    projects={details.projects}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -687,12 +804,12 @@ export default function App() {
   });
 
   return (
-    <div className="relative flex flex-col lg:flex-row min-h-screen font-sans text-white selection:bg-orange-500/30 selection:text-orange-200 bg-[#050505]">
+    <div className="relative flex flex-col lg:flex-row min-h-screen font-sans text-white selection:bg-orange-500/30 selection:text-orange-200 bg-[#050505] overflow-x-hidden">
       <AtmosphericBackground />
 
       {/* --- CỘT TRÁI (SIDEBAR) TRONG TRANG CHỦ --- */}
       <div
-        className={`relative z-50 p-6 md:p-10 lg:p-12 xl:p-20 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
+        className={`relative z-50 p-6 md:p-10 lg:p-12 xl:p-20 lg:fixed lg:top-0 lg:left-0 lg:h-screen flex flex-col justify-between transition-all duration-500 ease-in-out
                       ${
                         isSidebarCollapsed
                           ? "w-full lg:w-[100px] px-4 md:px-4 lg:px-4 items-center"
@@ -702,7 +819,7 @@ export default function App() {
         {isSidebarCollapsed && (
           <button
             onClick={() => handlePageChange("home")}
-            className="absolute top-1/2 -right-5 transform -translate-y-1/2 bg-orange-500 text-white p-2.5 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-[100] hover:bg-orange-400 transition-colors hidden lg:block"
+            className="fixed top-1/2 left-[85px] transform -translate-y-1/2 bg-orange-500 text-white p-2.5 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)] z-[100] hover:bg-orange-400 transition-colors hidden lg:block"
             title="Expand Profile"
           >
             <ChevronsRight size={20} />
@@ -786,7 +903,7 @@ export default function App() {
 
         {isSidebarCollapsed && (
           <div
-            className="mt-8 relative z-10 hidden lg:block transition-all duration-500 cursor-pointer"
+            className="fixed bottom-8 left-[22px] z-10 hidden lg:block transition-all duration-500 cursor-pointer"
             onClick={() => handlePageChange("home")}
           >
             <img
@@ -803,8 +920,8 @@ export default function App() {
         className={`relative z-10 transition-all duration-500 ease-in-out bg-white/[0.02] backdrop-blur-[80px] shadow-[-20px_0_40px_rgba(0,0,0,0.5)] border-l border-white/5 min-h-screen
                       ${
                         isSidebarCollapsed
-                          ? "w-full lg:w-[calc(100%-100px)]"
-                          : "w-full lg:w-[60%]"
+                          ? "lg:ml-[100px] w-full lg:w-[calc(100%-100px)]"
+                          : "lg:ml-[40%] w-full lg:w-[60%]"
                       } `}
       >
         {/* HEADER TABS - KÍNH MỜ GẮT */}
@@ -923,7 +1040,6 @@ export default function App() {
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
               `}</style>
 
-              {/* BỘ LỌC ROLES (PILLS) */}
               <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar snap-x w-full">
                 {uniqueRoles.map((role, idx) => (
                   <button
@@ -964,9 +1080,12 @@ export default function App() {
                 if (filteredProjects.length === 0) return null;
 
                 return (
-                  <ProjectCategorySection
+                  // Ở trang chủ, gọi Component dạng cuộn ngang (Scroll)
+                  <ProjectCategoryScrollable
                     key={category.id}
-                    categoryTitle={category.title}
+                    categoryTitle={
+                      categoryData.projectSectionTitle || category.title
+                    }
                     projects={filteredProjects}
                   />
                 );
