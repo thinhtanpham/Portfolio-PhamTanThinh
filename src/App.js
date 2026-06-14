@@ -17,9 +17,9 @@ import {
 
 // Tạm thay thế bằng link ảnh online để Canvas có thể biên dịch thành công.
 // Khi đưa code về CodeSandbox của bạn, hãy bỏ comment dòng import bên dưới và xóa dòng const đi nhé.
-// import portraitImage from "./_ANA9050-Edit resize.png";
-const portraitImage =
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=800&q=80";
+import portraitImage from "./_ANA9050-Edit resize.png";
+//const portraitImage =
+//  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=800&q=80";
 
 // --- MOCK DATA ---
 const WORK_HISTORY = [
